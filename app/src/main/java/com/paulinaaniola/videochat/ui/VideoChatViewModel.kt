@@ -38,6 +38,9 @@ class VideoChatViewModel @Inject constructor(
         _uiState.update { VideoChatUiState.PermissionsDenied }
     }
 
+    /**
+     * Starts or restarts a call and maps SDK events into UI state updates.
+     */
     fun initializeSession() {
         connectJob?.cancel()
         currentCall()?.endSession()
@@ -93,6 +96,9 @@ class VideoChatViewModel @Inject constructor(
         initializeSession()
     }
 
+    /**
+     * Returns the active call when the UI is in the connected state.
+     */
     private fun currentCall(): VideoChatFacade? =
         (uiState.value as? VideoChatUiState.Connected)?.call
 }
