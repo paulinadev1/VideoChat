@@ -17,4 +17,7 @@ class VideoChatViewModel @Inject constructor() : ViewModel() {
         _uiState.update { VideoChatUiState.CheckingPersmissions }
     }
 
+    fun onPermissionsDenied() {
+        _uiState.update { VideoChatUiState.PermissionsDenied }
+    }
 }
