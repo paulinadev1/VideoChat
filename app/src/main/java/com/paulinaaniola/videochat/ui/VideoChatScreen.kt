@@ -51,6 +51,12 @@ fun VideoChatScreen(
     val viewState = viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(Unit) {
+        viewModel.viewEvents.collect { event ->
+            snackbarHostState.showSnackbar(event.message)
+        }
+    }
+
     val permissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.CAMERA,

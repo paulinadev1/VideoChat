@@ -7,7 +7,9 @@ import com.paulinaaniola.videochat.domain.VideoChatFacade
 import com.paulinaaniola.videochat.domain.repository.VideoChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,6 +24,9 @@ class VideoChatViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<VideoChatUiState>(VideoChatUiState.CheckingPersmissions)
     val uiState: StateFlow<VideoChatUiState> = _uiState
+
+    private val _viewEvents = MutableSharedFlow<VideoChatViewEvent>()
+    val viewEvents: SharedFlow<VideoChatViewEvent> = _viewEvents
 
     private var connectJob: Job? = null
 
@@ -43,6 +48,16 @@ class VideoChatViewModel @Inject constructor(
                 when (event) {
                     VideoChatEvent.Connected -> {
                         _uiState.update { VideoChatUiState.Connected(call = newCall) }
+                    }
+                    is VideoChatEvent.ParticipantLeftChat -> {
+                        viewModelScope.launch {
+                            _viewEvents.emit(VideoChatViewEvent.SubscriberLeft)
+                        }
+                    }
+                    is VideoChatEvent.Error -> {
+                        viewModelScope.launch {
+                            _viewEvents.emit(VideoChatViewEvent.Error(event.message))
+                        }
                     }
                     else -> {
                         // implement
@@ -76,4 +91,9 @@ class VideoChatViewModel @Inject constructor(
 
     private fun currentCall(): VideoChatFacade? =
         (uiState.value as? VideoChatUiState.Connected)?.call
+}
+
+sealed class VideoChatViewEvent(open val message: String) {
+    data object SubscriberLeft : VideoChatViewEvent("The other participant left the chat")
+    data class Error(override val message: String) : VideoChatViewEvent(message)
 }

@@ -21,5 +21,6 @@ interface VideoChatFacade {
 sealed interface VideoChatEvent {
     data object Connected : VideoChatEvent
     data object Disconnected : VideoChatEvent
+    data object ParticipantLeftChat : VideoChatEvent
     data class Error(val message: String) : VideoChatEvent
 }

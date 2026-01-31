@@ -110,8 +110,14 @@ private class VonageVideoChat(
             }
 
             override fun onStreamDropped(session: Session, stream: Stream) {
-                Log.i(TAG, "Stream dropped: ${stream.streamId}")
+                val wasSubscriber = subscriber != null
+                val isSubscriberStream = subscriber?.stream?.streamId == stream.streamId
+                subscriber = null
+
                 updateSubscriberState()
+                if (wasSubscriber && isSubscriberStream) {
+                    trySend(VideoChatEvent.ParticipantLeftChat)
+                }
             }
 
             override fun onError(session: Session, opentokError: OpentokError) {
