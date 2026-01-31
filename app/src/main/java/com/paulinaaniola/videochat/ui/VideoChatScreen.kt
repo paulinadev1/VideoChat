@@ -51,7 +51,7 @@ fun VideoChatScreen(
 
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         if (permissionsState.allPermissionsGranted) {
-            // TODO: implement
+            viewModel.initializeSession()
         } else {
             viewModel.onPermissionsDenied()
         }
@@ -88,6 +88,10 @@ fun VideoChatScreen(
                         permissionsState.launchMultiplePermissionRequest()
                     }
                 )
+
+                else -> {
+                    // TODO: to implement
+                }
             }
         }
     }
