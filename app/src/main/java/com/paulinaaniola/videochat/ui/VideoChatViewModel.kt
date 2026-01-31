@@ -92,6 +92,10 @@ class VideoChatViewModel @Inject constructor(
         currentCall()?.endSession()
     }
 
+    fun reconnect() {
+        initializeSession()
+    }
+
     private fun currentCall(): VideoChatFacade? =
         (uiState.value as? VideoChatUiState.Connected)?.call
 }

@@ -119,8 +119,10 @@ fun VideoChatScreen(
                         val publisherView = call.publisherView.collectAsStateWithLifecycle().value
                         val subscriberView = call.subscriberView.collectAsStateWithLifecycle().value
                         val isMuted = call.isPublisherMuted.collectAsStateWithLifecycle().value
-                        val isVideoEnabled = call.isPublisherCameraEnabled.collectAsStateWithLifecycle().value
-                        ConnectedScreen(publisherView,
+                        val isVideoEnabled =
+                            call.isPublisherCameraEnabled.collectAsStateWithLifecycle().value
+                        ConnectedScreen(
+                            publisherView,
                             subscriberView,
                             isMuted,
                             isVideoEnabled,
@@ -129,10 +131,9 @@ fun VideoChatScreen(
                             { viewModel.leaveChat() })
                     }
                 }
+
                 is VideoChatUiState.Disconnected -> DisconnectedScreen(
-                    onReconnectClick = {
-                        // TODO: implement
-                    }
+                    onReconnectClick = { viewModel.reconnect() }
                 )
             }
         }
