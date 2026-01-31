@@ -2,6 +2,7 @@ package com.paulinaaniola.videochat.data
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import com.opentok.android.BaseVideoRenderer
 import com.opentok.android.OpentokError
 import com.opentok.android.Publisher
@@ -14,6 +15,8 @@ import com.paulinaaniola.videochat.domain.repository.VideoChatRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
@@ -50,6 +53,12 @@ private class VonageVideoChat(
         private const val TAG = "TestVideoApp"
     }
 
+    private val _publisherView = MutableStateFlow<View?>(null)
+    override val publisherView: StateFlow<View?> = _publisherView
+
+    private val _subscriberView = MutableStateFlow<View?>(null)
+    override val subscriberView: StateFlow<View?> = _subscriberView
+
     private var session: Session? = null
     private var publisher: Publisher? = null
     private var subscriber: Subscriber? = null
@@ -69,6 +78,7 @@ private class VonageVideoChat(
                     )
                 }
                 publisher?.let { session.publish(it) }
+                updatePublisherState()
                 trySend(VideoChatEvent.Connected)
             }
 
@@ -88,11 +98,13 @@ private class VonageVideoChat(
                         setSubscriberListener(subscriberListener)
                     }
                     subscriber?.let { session.subscribe(it) }
+                    updateSubscriberState()
                 }
             }
 
             override fun onStreamDropped(session: Session, stream: Stream) {
                 Log.i(TAG, "Stream dropped: ${stream.streamId}")
+                updateSubscriberState()
             }
 
             override fun onError(session: Session, opentokError: OpentokError) {
@@ -103,5 +115,13 @@ private class VonageVideoChat(
 
         session.connect(token)
         awaitClose()
+    }
+
+    private fun updatePublisherState() {
+        _publisherView.value = publisher?.view
+    }
+
+    private fun updateSubscriberState() {
+        _subscriberView.value = subscriber?.view
     }
 }

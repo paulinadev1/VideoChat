@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -83,14 +84,23 @@ fun VideoChatScreen(
                     title = "Checking permissions",
                     message = "Preparing video chat access."
                 )
+
                 is VideoChatUiState.PermissionsDenied -> PermissionsDeniedScreen(
                     onGrantPermissionsClick = {
                         permissionsState.launchMultiplePermissionRequest()
                     }
                 )
 
-                else -> {
-                    // TODO: to implement
+                is VideoChatUiState.Connecting -> ConnectingLoading()
+                is VideoChatUiState.Connected -> {
+                    val call = state.call
+                    if (call == null) {
+                        ConnectingLoading()
+                    } else {
+                        val publisherView = call.publisherView.collectAsStateWithLifecycle().value
+                        val subscriberView = call.subscriberView.collectAsStateWithLifecycle().value
+                        ConnectedScreen(publisherView, subscriberView)
+                    }
                 }
             }
         }
@@ -148,6 +158,31 @@ fun PermissionsDeniedScreen(
             modifier = Modifier.padding(top = 40.dp)
         ) {
             Text("Grant Permissions")
+        }
+    }
+}
+
+
+@Composable
+fun ConnectedScreen(
+    publisherView: android.view.View?,
+    subscriberView: android.view.View?,
+) {
+    Box() {
+        Column(modifier = Modifier.fillMaxSize()) {
+            subscriberView?.let {
+                AndroidView(
+                    factory = { subscriberView },
+                    modifier = Modifier.weight(1f)
+                )
+
+                publisherView?.let { view ->
+                    AndroidView(
+                        factory = { view },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
     }
 }
