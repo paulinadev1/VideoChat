@@ -52,6 +52,14 @@ class VideoChatViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    fun onPause() {
+        currentCall()?.pauseSession()
+    }
+
+    fun onResume() {
+        currentCall()?.resumeSession()
+    }
+
 
     fun onAudioToggleClick() {
         currentCall()?.toggleMicrophone()

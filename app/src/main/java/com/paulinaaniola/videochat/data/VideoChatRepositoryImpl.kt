@@ -144,6 +144,14 @@ private class VonageVideoChat(
         _isPublisherCameraEnabled.value = currentPublisher.publishVideo != false
     }
 
+    override fun pauseSession() {
+        session?.onPause()
+    }
+
+    override fun resumeSession() {
+        session?.onResume()
+    }
+
     override fun endSession() {
         session?.disconnect()
         clearSession()

@@ -11,6 +11,8 @@ interface VideoChatFacade {
     val isPublisherCameraEnabled: StateFlow<Boolean>
 
     fun connect(): Flow<VideoChatEvent>
+    fun pauseSession()
+    fun resumeSession()
     fun endSession()
     fun toggleMicrophone()
     fun toggleCamera()

@@ -23,4 +23,14 @@ class VideoChatActivity : ComponentActivity() {
             )
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
 }
