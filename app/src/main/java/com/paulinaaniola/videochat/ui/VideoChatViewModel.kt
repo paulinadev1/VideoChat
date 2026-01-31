@@ -40,6 +40,7 @@ class VideoChatViewModel @Inject constructor(
 
     fun initializeSession() {
         connectJob?.cancel()
+        currentCall()?.endSession()
         _uiState.update { VideoChatUiState.Connecting }
 
         val newCall = repository.initializeSession()
@@ -87,7 +88,6 @@ class VideoChatViewModel @Inject constructor(
     fun leaveChat() {
         currentCall()?.endSession()
     }
-
 
     private fun currentCall(): VideoChatFacade? =
         (uiState.value as? VideoChatUiState.Connected)?.call
