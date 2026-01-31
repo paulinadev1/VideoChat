@@ -208,17 +208,28 @@ fun ConnectedScreen(
 ) {
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
-            subscriberView?.let {
+            if (subscriberView == null) {
+                if (isVideoEnabled) {
+                    publisherView?.let { view ->
+                        AndroidView(
+                            factory = { view },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+            } else {
                 AndroidView(
                     factory = { subscriberView },
                     modifier = Modifier.weight(1f)
                 )
 
-                publisherView?.let { view ->
-                    AndroidView(
-                        factory = { view },
-                        modifier = Modifier.weight(1f)
-                    )
+                if (isVideoEnabled) {
+                    publisherView?.let { view ->
+                        AndroidView(
+                            factory = { view },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         }
