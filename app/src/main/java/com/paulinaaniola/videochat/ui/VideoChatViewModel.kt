@@ -63,9 +63,6 @@ class VideoChatViewModel @Inject constructor(
                             _viewEvents.emit(VideoChatViewEvent.Error(event.message))
                         }
                     }
-                    else -> {
-                        // implement
-                    }
                 }
             }
             .launchIn(viewModelScope)
