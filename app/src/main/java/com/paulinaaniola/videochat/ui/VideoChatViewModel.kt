@@ -50,6 +50,9 @@ class VideoChatViewModel @Inject constructor(
                     VideoChatEvent.Connected -> {
                         _uiState.update { VideoChatUiState.Connected(call = newCall) }
                     }
+                    VideoChatEvent.Disconnected -> {
+                        _uiState.update { VideoChatUiState.Disconnected }
+                    }
                     is VideoChatEvent.ParticipantLeftChat -> {
                         viewModelScope.launch {
                             _viewEvents.emit(VideoChatViewEvent.SubscriberLeft)

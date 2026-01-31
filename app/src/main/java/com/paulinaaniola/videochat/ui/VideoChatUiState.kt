@@ -9,4 +9,5 @@ sealed class VideoChatUiState {
     data class Connected(
         val call: VideoChatFacade? = null,
     ) : VideoChatUiState()
+    data object Disconnected : VideoChatUiState()
 }

@@ -129,6 +129,11 @@ fun VideoChatScreen(
                             { viewModel.leaveChat() })
                     }
                 }
+                is VideoChatUiState.Disconnected -> DisconnectedScreen(
+                    onReconnectClick = {
+                        // TODO: implement
+                    }
+                )
             }
         }
     }
@@ -272,6 +277,27 @@ fun ActionBar(
                     modifier = Modifier.size(48.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun DisconnectedScreen(
+    onReconnectClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Disconnected",
+            style = MaterialTheme.typography.titleLarge
+        )
+        Button(onClick = onReconnectClick, modifier = Modifier.padding(20.dp)) {
+            Text("Reconnect")
         }
     }
 }
