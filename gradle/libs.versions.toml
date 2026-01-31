@@ -9,6 +9,7 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.2"
 composeBom = "2024.09.00"
 hilt = "2.51.1"
+vonage-video = "2.32.1"
 accompanistPermissions = "0.37.3"
 
 [libraries]
@@ -30,6 +31,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
 google-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
+vonage-video = { group = "com.vonage", name = "client-sdk-video", version.ref = "vonage-video" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

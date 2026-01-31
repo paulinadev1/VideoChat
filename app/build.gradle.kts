@@ -55,6 +55,7 @@ dependencies {
     testImplementation(libs.junit)
     implementation(libs.hilt.android)
     implementation(libs.google.accompanist.permissions)
+    implementation(libs.vonage.video)
     kapt(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
