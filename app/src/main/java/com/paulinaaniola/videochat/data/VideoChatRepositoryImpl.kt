@@ -27,7 +27,9 @@ class VideoChatRepositoryImpl @Inject constructor(
     val subscriberListener: SubscriberListener
 ) : VideoChatRepository {
 
-
+    /**
+     * Builds a new video chat facade using the current Vonage configuration.
+     */
     override fun initializeSession(): VideoChatFacade {
         return VonageVideoChat(
             appContext,
@@ -40,6 +42,16 @@ class VideoChatRepositoryImpl @Inject constructor(
     }
 }
 
+/**
+ *  Wrapper around the Vonage SDK that exposes a simple facade for the UI.
+ *
+ * @param appContext Application context used to build SDK sessions and streams.
+ * @param appId Vonage application identifier for the SDK session.
+ * @param sessionId Vonage session identifier to join.
+ * @param token Auth token used to connect to the session.
+ * @param publisherListener Listener for local publisher lifecycle callbacks.
+ * @param subscriberListener Listener for remote subscriber lifecycle callbacks.
+ */
 private class VonageVideoChat(
     private val appContext: Context,
     private val appId: String,
@@ -54,15 +66,27 @@ private class VonageVideoChat(
     }
 
     private val _publisherView = MutableStateFlow<View?>(null)
+    /**
+     * Emits the current local publisher view for display.
+     */
     override val publisherView: StateFlow<View?> = _publisherView
 
     private val _subscriberView = MutableStateFlow<View?>(null)
+    /**
+     * Emits the current remote subscriber view for display.
+     */
     override val subscriberView: StateFlow<View?> = _subscriberView
 
     private val _isPublisherMuted = MutableStateFlow(false)
+    /**
+     * Emits whether the local publisher microphone is muted.
+     */
     override val isPublisherMuted: StateFlow<Boolean> = _isPublisherMuted
 
     private val _isPublisherCameraEnabled = MutableStateFlow(true)
+    /**
+     * Emits whether the local publisher camera is enabled.
+     */
     override val isPublisherCameraEnabled: StateFlow<Boolean> = _isPublisherCameraEnabled
 
 
@@ -70,6 +94,9 @@ private class VonageVideoChat(
     private var publisher: Publisher? = null
     private var subscriber: Subscriber? = null
 
+    /**
+     * Bridges the SDK session lifecycle into a flow of domain events.
+     */
     override fun connect(): Flow<VideoChatEvent> = callbackFlow {
         val session = Session.Builder(appContext, appId, sessionId).build()
         this@VonageVideoChat.session = session
@@ -138,22 +165,34 @@ private class VonageVideoChat(
         _subscriberView.value = subscriber?.view
     }
 
+    /**
+     * Toggles the publisher microphone and updates the exposed state flow.
+     */
     override fun toggleMicrophone() {
         val currentPublisher = publisher ?: return
         currentPublisher.publishAudio = !currentPublisher.publishAudio
         _isPublisherMuted.value = currentPublisher.publishAudio == false
     }
 
+    /**
+     * Toggles the publisher camera and updates the exposed state flow.
+     */
     override fun toggleCamera() {
         val currentPublisher = publisher ?: return
         currentPublisher.publishVideo = !currentPublisher.publishVideo
         _isPublisherCameraEnabled.value = currentPublisher.publishVideo != false
     }
 
+    /**
+     * Pauses the SDK session to align with the host lifecycle.
+     */
     override fun pauseSession() {
         session?.onPause()
     }
 
+    /**
+     * Resumes the SDK session after the host comes back to foreground.
+     */
     override fun resumeSession() {
         session?.onResume()
     }
@@ -163,6 +202,9 @@ private class VonageVideoChat(
         clearSession()
     }
 
+    /**
+     * Resets local state after the SDK session ends.
+     */
     private fun clearSession() {
         session = null
         publisher = null
