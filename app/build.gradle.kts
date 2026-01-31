@@ -41,6 +41,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
 
 dependencies {
@@ -58,6 +62,10 @@ dependencies {
     implementation(libs.google.accompanist.permissions)
     implementation(libs.vonage.video)
     kapt(libs.hilt.compiler)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
