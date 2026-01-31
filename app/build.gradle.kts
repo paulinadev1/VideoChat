@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     implementation(libs.hilt.android)
+    implementation(libs.google.accompanist.permissions)
     kapt(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
