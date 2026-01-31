@@ -52,6 +52,20 @@ class VideoChatViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+
+    fun onAudioToggleClick() {
+        currentCall()?.toggleMicrophone()
+    }
+
+    fun onVideoToggleClick() {
+        currentCall()?.toggleCamera()
+    }
+
+    fun leaveChat() {
+        currentCall()?.endSession()
+    }
+
+
     private fun currentCall(): VideoChatFacade? =
         (uiState.value as? VideoChatUiState.Connected)?.call
 }

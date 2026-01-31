@@ -1,16 +1,28 @@
 package com.paulinaaniola.videochat.ui
 
 import android.Manifest
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CallEnd
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -23,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -99,7 +112,15 @@ fun VideoChatScreen(
                     } else {
                         val publisherView = call.publisherView.collectAsStateWithLifecycle().value
                         val subscriberView = call.subscriberView.collectAsStateWithLifecycle().value
-                        ConnectedScreen(publisherView, subscriberView)
+                        val isMuted = call.isPublisherMuted.collectAsStateWithLifecycle().value
+                        val isVideoEnabled = call.isPublisherCameraEnabled.collectAsStateWithLifecycle().value
+                        ConnectedScreen(publisherView,
+                            subscriberView,
+                            isMuted,
+                            isVideoEnabled,
+                            { viewModel.onAudioToggleClick() },
+                            { viewModel.onVideoToggleClick() },
+                            { viewModel.leaveChat() })
                     }
                 }
             }
@@ -167,6 +188,11 @@ fun PermissionsDeniedScreen(
 fun ConnectedScreen(
     publisherView: android.view.View?,
     subscriberView: android.view.View?,
+    isMuted: Boolean,
+    isVideoEnabled: Boolean,
+    onAudioToggleClick: () -> Unit,
+    onVideoToggleClick: () -> Unit,
+    onLeaveClick: () -> Unit
 ) {
     Box() {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -182,6 +208,63 @@ fun ConnectedScreen(
                         modifier = Modifier.weight(1f)
                     )
                 }
+            }
+        }
+        ActionBar(
+            isMuted = isMuted,
+            isVideoEnabled = isVideoEnabled,
+            onAudioToggleClick = onAudioToggleClick,
+            onVideoToggleClick = onVideoToggleClick,
+            onLeaveClick = onLeaveClick,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+}
+
+
+@Composable
+fun ActionBar(
+    isMuted: Boolean,
+    isVideoEnabled: Boolean,
+    onAudioToggleClick: () -> Unit,
+    onVideoToggleClick: () -> Unit,
+    onLeaveClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Black.copy(alpha = 0.35f))
+            .padding(top = 20.dp, bottom = 40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onAudioToggleClick, modifier = Modifier.size(64.dp)) {
+                Icon(
+                    imageVector = if (isMuted) Icons.Filled.MicOff else Icons.Filled.Mic,
+                    contentDescription = if (isMuted) "Unmute microphone" else "Mute microphone",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+            IconButton(onClick = onVideoToggleClick, modifier = Modifier.size(64.dp)) {
+                Icon(
+                    imageVector = if (isVideoEnabled) Icons.Filled.Videocam else Icons.Filled.VideocamOff,
+                    contentDescription = if (isVideoEnabled) "Turn off camera" else "Turn on camera",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+            IconButton(onClick = onLeaveClick, modifier = Modifier.size(64.dp)) {
+                Icon(
+                    imageVector = Icons.Filled.CallEnd,
+                    contentDescription = "Leave chat",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(48.dp)
+                )
             }
         }
     }

@@ -5,9 +5,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface VideoChatFacade {
-    fun connect(): Flow<VideoChatEvent>
     val publisherView: StateFlow<View?>
     val subscriberView: StateFlow<View?>
+    val isPublisherMuted: StateFlow<Boolean>
+    val isPublisherCameraEnabled: StateFlow<Boolean>
+
+    fun connect(): Flow<VideoChatEvent>
+    fun endSession()
+    fun toggleMicrophone()
+    fun toggleCamera()
 }
 
 sealed interface VideoChatEvent {

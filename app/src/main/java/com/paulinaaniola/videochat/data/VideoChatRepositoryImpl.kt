@@ -46,7 +46,7 @@ private class VonageVideoChat(
     private val sessionId: String,
     private val token: String,
     private val publisherListener: PublisherListener,
-    private val subscriberListener: SubscriberListener
+    private val subscriberListener: SubscriberListener,
 ) : VideoChatFacade {
 
     companion object Companion {
@@ -58,6 +58,13 @@ private class VonageVideoChat(
 
     private val _subscriberView = MutableStateFlow<View?>(null)
     override val subscriberView: StateFlow<View?> = _subscriberView
+
+    private val _isPublisherMuted = MutableStateFlow(false)
+    override val isPublisherMuted: StateFlow<Boolean> = _isPublisherMuted
+
+    private val _isPublisherCameraEnabled = MutableStateFlow(true)
+    override val isPublisherCameraEnabled: StateFlow<Boolean> = _isPublisherCameraEnabled
+
 
     private var session: Session? = null
     private var publisher: Publisher? = null
@@ -123,5 +130,32 @@ private class VonageVideoChat(
 
     private fun updateSubscriberState() {
         _subscriberView.value = subscriber?.view
+    }
+
+    override fun toggleMicrophone() {
+        val currentPublisher = publisher ?: return
+        currentPublisher.publishAudio = !currentPublisher.publishAudio
+        _isPublisherMuted.value = currentPublisher.publishAudio == false
+    }
+
+    override fun toggleCamera() {
+        val currentPublisher = publisher ?: return
+        currentPublisher.publishVideo = !currentPublisher.publishVideo
+        _isPublisherCameraEnabled.value = currentPublisher.publishVideo != false
+    }
+
+    override fun endSession() {
+        session?.disconnect()
+        clearSession()
+    }
+
+    private fun clearSession() {
+        session = null
+        publisher = null
+        subscriber = null
+        _publisherView.value = null
+        _subscriberView.value = null
+        _isPublisherMuted.value = false
+        _isPublisherCameraEnabled.value = true
     }
 }
