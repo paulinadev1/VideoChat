@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".VideoChatAppApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -11,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VideoChat">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.VideoChatActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.VideoChat">
