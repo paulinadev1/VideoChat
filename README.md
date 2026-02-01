@@ -1,4 +1,4 @@
-# TestVideoApp
+# VideoChat
 
 This is a sample video chat application for Android, built using modern Android development practices and the Vonage Video SDK.
 
